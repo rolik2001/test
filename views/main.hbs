@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TIME</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+    </head>
+       
+       <body> 
+           <h1 id ="date">{{date}}</h1>
+    </body>
+    <script>
+        var i = 10;
+    
+        function Request(){
+            $.ajax({
+                url: 'test',
+                type: 'GET',
+                data: {'StartTime' : new Date().getTime()} ,
+                success: function(data) {   
+                      var time = new Date(data.ServerTime + (data.ServerTime - data.StartTime))
+
+                    //   var time = new Date(data.ServerTime + (data.StartTime - data.ServerTime))
+                    // var time = new Date(data.ServerTime + (data.ServerTime-new Date()))
+
+                    //   Start(Math.floor((test-data.ServerTime)/2));
+                      Start(Math.floor(time.getTime()/1000));
+                      
+                    }       
+               });
+        }
+        // Request();
+        Request2(0)
+        
+        function Start(time) {
+         
+        setInterval(()=>{
+            if( time%2 == 0)     
+            document.body.style.backgroundColor = "blue";
+            else 
+             document.body.style.backgroundColor = " red";
+            time = time + 1;
+          document.getElementById("date").innerHTML = new Date(time*1000).toUTCString();
+             
+        },1000)
+        }
+        
+        
+        var Difference = [];
+        function Request2(a){
+            if(a<i){
+                $.ajax({
+                url: 'test',
+                type: 'GET',
+                data: {'StartTime' : new Date().getTime()} ,
+                success: function(data) {
+                    Difference.push(data.ServerTime - data.StartTime);
+                      Request2(a+1)
+                    }       
+               });
+                
+            }
+            else            
+               Medium(0);
+               
+        }
+        
+        var medium = 0;
+        
+        function Medium(a) {
+            if(a<i){
+                medium = medium + Difference[a];
+                Medium(a+1);
+        } else 
+           Request3(medium/i)
+        }        
+        
+        function Request3(medium) {
+            $.ajax({
+                url: 'test',
+                type: 'GET',
+                data: {'StartTime' : new Date().getTime()} ,
+                success: function(data) {   
+                      var time = new Date(data.ServerTime + medium)
+                      Start(Math.floor(time.getTime()/1000));
+                      console.log(medium)
+                    }       
+               });
+        }
+
+    </script>
+    
+</html>
